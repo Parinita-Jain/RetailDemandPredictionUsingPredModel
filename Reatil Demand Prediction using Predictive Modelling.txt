@@ -1,0 +1,251 @@
+Defining A business problem
+converting busi problem into data science prob
+hypo generation and data collectoion
+data exploration and preprocessing
+feature eng and model building
+model tuning
+ensemble models
+sharing results with stakeholders
+
+Stages of predictive modelling are--
+prob def,hy generation,data extraction/collection,data exploration and transformation,predictive modelling,model deployment/implementation
+
+Hypo gener-- is to list down all the possible variables , which might influence problem obj.
+but care has to be taken that this is not influenced.
+eg what are factors,those can impact the customer will default or not?
+---income-higher income means higher chance of financial stability that may lead to lower default rate.
+--job type-if job is more stable tahat can also lead to lower default rate. eg front end sales job is less stable than data science job
+--credit history--ur previous good repayment behaviour suggest that u know how to use credit products and that leads to lower default rate., etc-
+
+Q. should hy gen should be done before or after looking at the data?--before so that we are less biased., stops time wastage.
+
+Data extraction/collection---extract/collect data from diff sources and combine those for exploration and model building.And when u look data,u might come across few more hypo which may help u improve ur modelling.
+
+Data exploration--getting insights into data for effective analysis.
+
+Busin probl--current or long term problems.
+For our proj, we r working with large offline retailer selling FMCGs like pretzels,frozen pizza,etc.
+So on 1 side we have-- manufacturers who produce FMCGs--these r then supplied to retailers who acquire items from diff manufacturers. These items are then stored into inventory and supplied to stores based on demand.
+Then to the customer who is the end consumer--goods are sold.
+
+So, to define a business problem-- discuss with stakeholders.Lets say the prob came out as--high business losses incurred by the retailer.
+components of business losses are--
+profit/loss=revenue decrease -cost increase
+revenue=(#products_sold*average_product_price)
+revenue=#customrers*average_products_bought*average_product_price
+revenue=(#old_customers+#new_customers)*avg_products_bought*avg_product_price
+revenue=(# high_val_customers+#low_val_customers+#new_customers)*avg_products_bought*avg_product_price
+cost=#products_bought*avg_buying_price+op cost
+cost=#products_bought*avg_buying_price+inventory_cost+manpower_cost+promotional_cost+other_operational_cost
+cost=#manufacturer*avg_products_bought*avg_buying_price+inventory_cost+manpower_cost+promotional_cost+other_operational_cost
+
+Reaching the rigth business obj-identifying objectives from revenue----
+1st boost revenue--
+revenue=(#old_customers+#new_customers)*avg_products_bought*avg_product_price--
+out of store optimization---i.e. email targeting
+in-store experience optimization--
+#old_customers
+i.e. wait time optimization,prevent out-of-stocks
+#new_customers
+online distribution channels,optimizing customer acquisition through marketing channels such as social media,etc
+#avg_products_bought--by optimizing store laypout,optimize loyalty programme,
+avg product price--optimize pricing strategy by region based pricing,deciding right margin
+
+Reducing cost--
+avg_products_bought--prevent overstocking-by setting inventory alerts,forecast in-store demand
+reducing avg buying price-negotiating new prices,explore other manufacturers/suppliers
+opotimize manpower cost--fine tune schedules,invest in automation,organization restructuring
+optimizing promotion cost--cut down spending on expensive channelks, explore new cost effective channels
+other operational cost--optimize logistics cost,increase automation,etc
+
+Comparing impact and effect--
+here lets say in our project we are concerned with low effrot,high impact--i.e. prevent overstocking/understocking
+So, final problem stmt is--
+business obkjective ois prevent overstockking and understocking of goods.
+ways to achieve business obje--
+min and max inventory level for items
+set alerts when stock reaches threshold
+identyfying unreliable suppliers
+forecasting demand using historical data
+so prob stmt is predict the demand of packed items for each store to reduce overstocking and understocking of items.
+but are we missing something--yes element of time
+
+Hypo generation--
+listing down facotrs that might effect our data.
+
+product features-- which product was sold?frozen pizza,cereals,pretzels,etc
+packaging--packed in a plastic or cardboard box,etc
+product size-s , m, l
+price of product
+company of product
+manuf dates
+time based features--when was the product sold?
+like offer applicable,product promotion,holiday season,
+store features-- where was the product sold?store location,size of store, marketing/banners,competition with other store in area
+
+there can be many more hypot
+
+Data Extraction---
+now waht data do we need to validate hypo--?
+eg which prod was sold-->we can get infor from product catalogue with details from inventory team
+when was product sold?--details regarding the sales of each product store wise along with info of date and valid offers on the goods from data warehouse
+store features --when was product sold?--info can be collected for each store regarding location,size,etc from the store managemenrt team.
+
+now, things to condsider is--fullfillment gap--
+i.e manufacturers supplies goods on the basis of demand by retailer with a 1 week heads up.
+so demand forecasts for next week if done would not be useful. So , sol is make pred for next to next week.
+
+Now going through the available dataset--
+this dataset is given by dunnhumby openly.
+
+Available dataset is for 4 selected categories-- pretzels,frozen pizza,boxed cereal,mouthwash
+
+product data--
+upc
+description
+manufacturer
+category
+sub_category
+product_size
+
+sales_data
+week_end_daet
+store_num
+upc
+units
+base_price
+feature
+dispaly
+
+store data
+store_id
+store_name
+add_city_name
+addr_state_prov_code
+msa_Code
+seg_value_name
+parking_space_qty
+
+
+upc is unique id for product
+store_num=store_id
+through these keys we woill combine our data
+our target variable is units
+
+EDA--
+understanding data--
+eda.ipynb-------
+
+data exploration summary---
+week end date insights--
+data for past142 weeks-14 jan 2009 to 28 sep 2011, all dates are 7 days apart, no missing dates
+
+product code and store id--
+upc-30 unique product codes,each upc has min 1 unit sold per week, store_num-76 unique store id,each store sells min of 1 product per week
+
+prod base price --range from $1-$8. No extreme values
+
+featured and display products- on promotional day--of all the products sold 10% of the time they were featured products, 13% products on dispaly.However only 5% products were on in stroe display and featured at the same time.
+
+When we look at the target variable which is no. of units sold--most values lie in range--0-250 .and ther are a few outliers.
+If we do log distribution--we see it almost look like normal distribution.
+
+product dataset--in total 7 subcategories--
+bag sancks-1 subcategory,
+frozen pizza-1 subcategory
+oral hygiene-2
+cold cereal-3 subcategories
+
+MAnufacturers-- total 9,private label supplies all 4 catgoory products. Other 8 manufacturers produce only 1 category product.
+
+
+store dataset--
+76 store id,72 store names,located in 51 cities,spread over 4 states.
+Only 25 stores have parking space area listed. Mostly between 250-500 units.
+
+Most stores have area 30-70k.Less than 20 stores with area less than 30k or greater than 90k.
+
+Sales area for ohiio and texas-=-
+93% of stores with sales area range betweeen 1k-100k. Texas mostly has stores betw sales area 30k to 60k
+For all these stores, weekly avg follows rough normal dist,most weeks have avg around 25000.
+
+store segments-
+upscale stores,mainstream stores,value stores
+
+Validating Hypo--
+Summarizing key insights--
+So we generated a hypo when product is featured with some offers, sales is higher, So from weeekly sales data we concluded that--it is true ,also product promotion-i.e. sales will be more for products with in-store promotion.
+Featured products-prove that individual promotion have huge impact on sale. Display/featured product have higher sale.
+
+Product data--
+-product type/category:diff product categories can have significantly varying trends/patterns.--observation is category of products doesnot directly affect the edmand or sales but point to note that products by the same manufacturer have spikes around the same time.
+-price of product:same category products with lower price have more sales.--cold cereal,bag snacks and oral hygiene products with lower price have higher sales,while frozen pizza items have higher sale for higher priced pizzas.
+-productg size-larger products should be more in demand.increase in prod size doesnt show increase in demand. 
+-comapny/manufacturer-well known brands have higher sales --sales vary for diff manufacturers. Private label has highest sales and frito lay has lowest sales for pretzels.
+
+
+store data--
+store loc: stores in a particular state/city will have a similar trend--
+size of store- stores with larger area will have more sales-true
+avg wait timepplower wait time,higher units sold
+
+Data preprocessing---
+ML models cannot handle missing values.
+Strings not supported
+Outliers can effect model performance.
+
+Datapreprocessing is diff for numercal and categorical data.
+Numerical data-missing value imputation,outlier treatment,variable transformation
+Categorical--missing value imputation,sparse classes or high cardinality,convert to  numerical
+
+Preprocessing -categorical then numrical
+preprocessing.ipynb--
+
+Validation strategy--
+our goal is to forecast demand of packed items for each store in the next week to reduce overstocking ands understocking.
+we will compare forecast with actual demand. lets say its like--
+store/product , forecast,actual
+A,22,27
+B,34,56
+C,8,11
+D,39,32
+E,15,8
+
+now, we can cal absolute diff and then tk avg.
+MAE=8.8
+rmse
+prob with rmse is--this doenot tk into acc overstocking and understocking. In rmse y-ydash or ydash-y doesnt make much diff.So we use rmsle eg
+forecast,demand,status,rmse,rmsle*100
+50,40,overstocking,5,4.8455
+30,40,understocking,5,6.24---penalized more
+performance of model 
+
+baselinemodel.ipynb
+
+validationstrategy.ipynb
+
+feature engineering.ipynb--
+
+boosting--models are dependent and correct the errors of previous model.
+hyperparmatertuningxgboost.ipynb----
+catboost.ipynb---
+lightgbm
+
+advanced ensemble methods---
+introduction to ensemble learning
+weighted_avg.ipynb
+
+Final MOdel---
+top 4 features from models--
+model1(RF)-avg units in 2 months,feature,lag features-52 weeks,base price
+model2(XGBoost)-feature,avg units in 2 months,manufacture_2,display
+model3-feature,avg units in 2 months,lag feature-52 weeks,display
+
+sales are hihger when project is featured.
+SO here is the final pipeline for predicting future predictions--
+collect historical data,preprocessing & featuure eng , forecasting next weeks demand--
+XGBoost(n_estimators-720,max_Depth=4,learning_Rate=0.0o1,gamma=0,min_child_weight-2,subsmaple=1)---share with inventory team so they gear up for next week sales.
+
+https://www.analyticsvidhya.com/blog/2019/08/decoding-black-box-step-by-step-guide-interpretable-machine-learning-models-python/
+ 
+
